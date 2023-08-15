@@ -1,8 +1,7 @@
-use crate::parameters::NUMBER_OF_QUESTIONS;
+use crate::parameters::{NUMBER_OF_QUESTIONS, POSSIBLE_ANSWERS};
+use rand::{thread_rng, Rng};
 
 pub type Answer = u8;
-pub const A: Answer = 0;
-pub const B: Answer = 1;
 
 #[derive(Clone, Debug)]
 pub struct Sheet {
@@ -16,22 +15,15 @@ pub struct MCQ {
 
 impl MCQ {
     pub fn generate_random() -> Self {
-        let mut answers = [A; NUMBER_OF_QUESTIONS];
-        for k in 0..NUMBER_OF_QUESTIONS {
-            if rand::random() {
-                answers[k] = B;
-            }
-        }
-        Self {answers: answers}
+        let mut rng = thread_rng();
+        Self {answers: core::array::from_fn(|_| rng.gen_range(0..POSSIBLE_ANSWERS))}
     }
 
     pub fn generate_random_sheet(&self) -> Sheet {
-        let mut answers = [A; NUMBER_OF_QUESTIONS];
+        let mut rng = thread_rng();
+        let answers: [Answer; NUMBER_OF_QUESTIONS] = core::array::from_fn(|_| rng.gen_range(0..POSSIBLE_ANSWERS));
         let mut grade = 0u8;
         for k in 0..NUMBER_OF_QUESTIONS {
-            if rand::random() {
-                answers[k] = B;
-            }
             grade += (answers[k] == self.answers[k]) as u8;
         }
         Sheet {
