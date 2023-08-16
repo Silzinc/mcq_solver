@@ -110,14 +110,12 @@ impl AnnealingSolver {
         }
     }
 
-    pub fn solve_mcq_test(mcq: &MCQ, sheets: [Sheet; SIMULATION_SHEETS]) -> Sheet {
+    // Testing purposes
+    pub fn solve_mcq_test(mcq: &MCQ, sheets: [Sheet; SIMULATION_SHEETS]) -> bool {
         let mut solver = Self::init(sheets);
         solver.annealing();
 
-        Sheet {
-            answers: solver.guess.answers,
-            grade: mcq.grade(&solver.guess),
-        }
+        mcq.grade(&solver.guess) as usize == NUMBER_OF_QUESTIONS
     }
 
     pub fn solve_mcq(sheets: [Sheet; SIMULATION_SHEETS]) -> [Answer; NUMBER_OF_QUESTIONS] {
