@@ -41,7 +41,7 @@ impl MCQ {
         }
     }
 
-    #[cfg(not(debug_assertions))]
+    // #[cfg(not(debug_assertions))]
     pub fn grade(&self, guess: &crate::annealing::GuessMCQ) -> u8 {
         let mut grade = 0u8;
         for k in 0..NUMBER_OF_QUESTIONS {
@@ -50,6 +50,7 @@ impl MCQ {
         grade
     }
 
+    /*
     #[cfg(debug_assertions)]
     pub fn grade(&self, gues: &crate::annealing::GuessMCQ) -> u8 { // let's call this `grade_simd`
         use std::simd::{Simd, SimdPartialEq, ToBitMask};
@@ -69,5 +70,5 @@ impl MCQ {
     // count up to 50 million comparisons per second with these optimizations
     // `grade_simd` is still preferable when making unoptimized dev builds, but
     // a release build should use `grade`
-
+    */
 }
