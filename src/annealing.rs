@@ -1,4 +1,4 @@
-use crate::{mcq::*, parameters::*, sheet::*};
+use crate::{parameters::*, sheet::*};
 use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {
@@ -6,11 +6,11 @@ pub struct GuessMCQ {
 }
 
 pub struct AnnealingSolver<'a> {
-    guess: GuessMCQ,
-    sheets: Vec<Sheet>,
-    beta: f64,
-    potential: u32,
-    params: &'a AnnealingParameters,
+    pub guess: GuessMCQ,
+    pub sheets: Vec<Sheet>,
+    pub beta: f64,
+    pub potential: u32,
+    pub params: &'a AnnealingParameters,
 }
 
 impl GuessMCQ {
@@ -121,14 +121,6 @@ impl<'a> AnnealingSolver<'a> {
             potential: potential,
             params: params,
         }
-    }
-
-    // Testing purposes
-    pub fn solve_mcq_test<'b: 'a>(mcq: &MCQ<'b>, sheets: Vec<Sheet>) -> bool {
-        let mut solver = Self::init(sheets, mcq.params);
-        solver.annealing();
-
-        mcq.grade(&solver.guess) as usize == solver.params.number_of_questions
     }
 
     #[allow(dead_code)]

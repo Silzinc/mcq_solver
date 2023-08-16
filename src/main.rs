@@ -1,15 +1,15 @@
 mod annealing;
-mod mcq;
+mod test {
+    pub mod mcq;
+}
 mod parameters;
 mod sheet;
 mod vec_util;
 // mod io;
 
 use annealing::AnnealingSolver;
-use mcq::MCQ;
 use parameters::*;
-use sheet::Sheet;
-use vec_util::vec_from_fn;
+use test::mcq::MCQ;
 
 fn main() {
     let params = AnnealingParameters::default();
@@ -19,18 +19,14 @@ fn main() {
 
     while iter < 1u32 {
         let mcq = MCQ::generate_random(&params);
-        let sheets: Vec<Sheet> =
-            vec_from_fn(params.simulation_sheets, || mcq.generate_random_sheet());
-        let best_grade = sheets.iter().max_by_key(|sh| sh.grade).unwrap().grade;
         iter += 1;
         let now = std::time::Instant::now();
-        if AnnealingSolver::solve_mcq_test(&mcq, sheets) {
+        if AnnealingSolver::solve_mcq_test(&mcq) {
             _successes += 1;
             println!(
-                "My grade : {0}/{0} \nBest grade of {1} answer sheets : {2}/{0}\nPossible choices : {3}\nTime required : {4} ms", 
+                "My grade : {0}/{0} \n{1} answer sheets\nPossible choices : {2}\nTime required : {3} ms", 
                 params.number_of_questions,  
                 params.simulation_sheets, 
-                best_grade,
                 params.possible_answers,
                 now.elapsed().as_nanos() as f64 / 1_000_000.
             );
