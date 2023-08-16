@@ -6,9 +6,9 @@ pub struct GuessMCQ {
 }
 
 pub struct AnnealingSolver {
-    guess  : GuessMCQ,
-    sheets : [Sheet; SIMULATION_SHEETS],
-    beta: f64,
+    guess    : GuessMCQ,
+    sheets   : [Sheet; SIMULATION_SHEETS],
+    beta     : f64,
     potential: u32,
 }
 
@@ -108,7 +108,7 @@ impl AnnealingSolver {
         }
     }
 
-    pub fn solve_mcq(mcq: &MCQ, sheets: [Sheet; SIMULATION_SHEETS]) -> Sheet {
+    pub fn solve_mcq_test(mcq: &MCQ, sheets: [Sheet; SIMULATION_SHEETS]) -> Sheet {
         let mut solver = Self::init(sheets);
         solver.annealing();
 
@@ -116,5 +116,11 @@ impl AnnealingSolver {
             answers: solver.guess.answers,
             grade: mcq.grade(&solver.guess),
         }
+    }
+
+    pub fn solve_mcq(sheets: [Sheet; SIMULATION_SHEETS]) -> [Answer; NUMBER_OF_QUESTIONS] {
+        let mut solver = Self::init(sheets);
+        solver.annealing();
+        solver.guess.answers
     }
 }
