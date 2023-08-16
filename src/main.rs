@@ -1,7 +1,7 @@
 mod mcq;
 mod annealing;
 mod parameters;
-mod io;
+// mod io;
 
 use mcq::{Sheet, MCQ};
 use annealing::AnnealingSolver;
