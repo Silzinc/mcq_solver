@@ -1,15 +1,15 @@
-mod vec_util;
-mod sheet;
-mod mcq;
 mod annealing;
+mod mcq;
 mod parameters;
+mod sheet;
+mod vec_util;
 // mod io;
 
-use vec_util::vec_from_fn;
-use mcq::MCQ;
-use sheet::Sheet;
 use annealing::AnnealingSolver;
+use mcq::MCQ;
 use parameters::*;
+use sheet::Sheet;
+use vec_util::vec_from_fn;
 
 fn main() {
     let params = AnnealingParameters::default();
@@ -19,7 +19,8 @@ fn main() {
 
     while iter < 1u32 {
         let mcq = MCQ::generate_random(&params);
-        let sheets: Vec<Sheet> = vec_from_fn(params.simulation_sheets, || mcq.generate_random_sheet());
+        let sheets: Vec<Sheet> =
+            vec_from_fn(params.simulation_sheets, || mcq.generate_random_sheet());
         let best_grade = sheets.iter().max_by_key(|sh| sh.grade).unwrap().grade;
         iter += 1;
         let now = std::time::Instant::now();
