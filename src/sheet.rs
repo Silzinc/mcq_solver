@@ -1,17 +1,17 @@
-use crate::parameters::NUMBER_OF_QUESTIONS;
+use crate::{parameters::NUMBER_OF_QUESTIONS, vec_util::vec_from_fn};
 
 pub type Answer = u8;
 
 #[derive(Clone, Debug)]
 pub struct Sheet {
-    pub answers: [Answer; NUMBER_OF_QUESTIONS],
+    pub answers: Vec<Answer>,
     pub grade: u8,
 }
 
 impl std::default::Default for Sheet {
     fn default() -> Self {
         Self {
-            answers: [0 as Answer; NUMBER_OF_QUESTIONS],
+            answers: vec![0 as Answer; NUMBER_OF_QUESTIONS],
             grade: 0u8,
         }
     }
