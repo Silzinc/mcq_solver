@@ -1,13 +1,18 @@
 [package]
-name = "xprojets_qcm"
+name = "mcq_solver_rustlib"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+pyo3 = "0.19.2"
 rand = "0.8.5"
 stacker = "0.1.15"
 
 [profile.dev]
 opt-level = 1 # makes the debug build run 30x faster roughly
+
+[lib]
+name = "mcq_solver_rustlib"
+crate-type = ["cdylib"]
