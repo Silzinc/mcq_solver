@@ -12,7 +12,6 @@ use annealing::AnnealingSolver;
 use parameters::*;
 
 fn main() {
-    parameters::default_parameters();
     let mut time = 0f64;
     let mut iter = 0u32;
     let mut _successes = 0u32;
