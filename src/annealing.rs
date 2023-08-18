@@ -1,5 +1,5 @@
 use crate::{mcq::*, parameters::*};
-use rand::Rng;
+use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {
     pub answers: [Answer; NUMBER_OF_QUESTIONS],
@@ -44,6 +44,15 @@ impl GuessMCQ {
     // a release build should use `grade`
 }
 
+#[allow(dead_code)]
+fn cross_log(x: u8, y: u8) -> f64 {
+    if x == 0 {
+        0.
+    } else {
+        (x as f64) * (y as f64).ln()
+    }
+}
+
 impl AnnealingSolver {
 
     fn update_potential(&mut self) {
@@ -55,27 +64,26 @@ impl AnnealingSolver {
         self.potential = potential;
     }
 
-    fn toggle_random(&mut self) -> usize {
-        let index: usize = rand::random::<usize>() & 127usize ;
-        // & 127usize is a fast equivalent to % 128
-        self.guess.answers[index] ^= 1u8;
-        // another fast xor to toggle the first bit
-
-        index
+    fn toggle_random(&mut self) -> (usize, Answer) {
+        let mut rng = thread_rng();
+        let index: usize = rng.gen_range(0..NUMBER_OF_QUESTIONS);
+        let previous = self.guess.answers[index];
+        self.guess.answers[index] = rng.gen_range(0..POSSIBLE_ANSWERS);
+        (index, previous)
     }
 
     fn annealing(&mut self) {
-        let mut rng = rand::thread_rng();
+        let mut rng = thread_rng();
         while self.beta < MAX_BETA {
             let old_potential = self.potential;
-            let index = self.toggle_random();
+            let (index, previous) = self.toggle_random();
             self.update_potential();
             if self.potential == 0 {break;}
 
             if self.potential > old_potential {
                 if rng.gen::<f64>() > (- ((self.potential - old_potential) as f64) * self.beta).exp() {
                     self.potential = old_potential;
-                    self.guess.answers[index] ^= 1u8;
+                    self.guess.answers[index] = previous;
                 } else {
                     self.beta *= LAMBDA_INV;
                 }
@@ -83,7 +91,7 @@ impl AnnealingSolver {
         }
     }
 
-    fn init<'a>(sheets: [Sheet; SIMULATION_SHEETS]) -> AnnealingSolver {
+    fn init(sheets: [Sheet; SIMULATION_SHEETS]) -> AnnealingSolver {
         let guess = GuessMCQ {answers: sheets.iter().max_by_key(|&sh| sh.grade).unwrap().answers};
 
         let mut potential = 0u32;
