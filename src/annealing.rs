@@ -13,7 +13,7 @@ pub struct AnnealingSolver {
 }
 
 impl GuessMCQ {
-    #[cfg(not(debug_assertions))]
+    // #[cfg(not(debug_assertions))]
     fn grade(&self, s: &Sheet) -> u8 {
         let mut grade = 0u8;
         for k in 0..NUMBER_OF_QUESTIONS {
@@ -22,6 +22,7 @@ impl GuessMCQ {
         grade
     }
 
+    /*
     #[allow(non_snake_case)]
     #[cfg(debug_assertions)]
     fn grade(&self, s: &Sheet) -> u8 { // call this one `grade_simd`
@@ -42,6 +43,7 @@ impl GuessMCQ {
     // count up to 50 million comparisons per second with these optimizations
     // `grade_simd` is still preferable when making unoptimized dev builds, but
     // a release build should use `grade`
+    */
 }
 
 #[allow(dead_code)]

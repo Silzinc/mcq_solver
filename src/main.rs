@@ -1,8 +1,7 @@
-#![feature(portable_simd)]
-
 mod mcq;
 mod annealing;
 mod parameters;
+mod io;
 
 use mcq::{Sheet, MCQ};
 use annealing::AnnealingSolver;
@@ -19,7 +18,7 @@ fn main() {
 
         let now = std::time::Instant::now();
         let best_grade = sheets.iter().max_by_key(|&sh| sh.grade).unwrap().grade;
-        let possible_answers = AnnealingSolver::solve_mcq(&mcq, sheets);
+        let possible_answers = AnnealingSolver::solve_mcq_test(&mcq, sheets);
         time += now.elapsed().as_nanos() as f64 / 1_000_000.;
 
         iter += 1;
