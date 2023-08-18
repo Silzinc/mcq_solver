@@ -1,4 +1,4 @@
-use crate::{mcq::*, parameters::*};
+use crate::{mcq::*, parameters::*, sheet::*};
 use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {

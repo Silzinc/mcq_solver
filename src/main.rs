@@ -1,3 +1,4 @@
+mod sheet;
 mod mcq;
 mod annealing;
 mod parameters;
