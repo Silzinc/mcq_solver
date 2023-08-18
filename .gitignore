@@ -1,5 +1,6 @@
 /target
 /fails
+/doc/doc-src
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -16,7 +17,7 @@ env/
 bin/
 build/
 develop-eggs/
-dist/
+# dist/
 eggs/
 lib/
 lib64/
