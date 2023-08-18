@@ -1,6 +1,6 @@
 use crate::{
     annealing::AnnealingSolver,
-    parameters::*,
+    parameters::AnnealingParameters,
     sheet::{Answer, Sheet},
 };
 use std::collections::HashMap;

@@ -1,4 +1,7 @@
-use crate::{parameters::*, sheet::*};
+use crate::{
+    parameters::AnnealingParameters, 
+    sheet::{Answer, Sheet},
+};
 use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {
