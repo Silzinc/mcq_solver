@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 stacker = "0.1.15"
+
+[profile.dev]
+opt-level = 1 # makes the debug build run 30x faster roughly
