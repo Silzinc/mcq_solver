@@ -14,7 +14,6 @@ pub struct AnnealingSolver<'a> {
 }
 
 impl GuessMCQ {
-    // #[cfg(not(debug_assertions))]
     fn grade(&self, s: &Sheet) -> u8 {
         let mut grade = 0u8;
         for k in 0..self.answers.len() {
@@ -22,31 +21,9 @@ impl GuessMCQ {
         }
         grade
     }
-
-    /*
-    #[allow(non_snake_case)]
-    #[cfg(debug_assertions)]
-    fn grade(&self, s: &Sheet) -> u8 { // call this one `grade_simd`
-        use std::simd::{Simd, SimdPartialEq, ToBitMask};
-        // Max number of lanes for a SIMD is 64
-        let self__simd1: Simd<Answer, 64> = Simd::from_slice(&self.answers[..64]);
-        let self__simd2: Simd<Answer, 64> = Simd::from_slice(&self.answers[64..]);
-        let sheet_simd1: Simd<Answer, 64> = Simd::from_slice(&s   .answers[..64]);
-        let sheet_simd2: Simd<Answer, 64> = Simd::from_slice(&s   .answers[64..]);
-
-        (self__simd1.simd_eq(sheet_simd1).to_bitmask().count_ones() +
-         self__simd2.simd_eq(sheet_simd2).to_bitmask().count_ones()) as u8
-    }
-
-    // `grade_simd` is supposedly around 4x faster, but llvm's automatic loop vectorizations +
-    // removing overflow checks make `grade` catch up to it and even surpass it by a margin
-
-    // count up to 50 million comparisons per second with these optimizations
-    // `grade_simd` is still preferable when making unoptimized dev builds, but
-    // a release build should use `grade`
-    */
 }
 
+// Maybe later used to replace least squares with cross entropy
 #[allow(dead_code)]
 fn cross_log(x: u8, y: u8) -> f64 {
     if x == 0 {
@@ -122,8 +99,7 @@ impl<'a> AnnealingSolver<'a> {
             params: params,
         }
     }
-
-    #[allow(dead_code)]
+    
     pub fn solve_mcq<'b: 'a>(sheets: Vec<Sheet>, params: &'b AnnealingParameters) -> Vec<Answer> {
         let mut solver = Self::init(sheets, params);
         solver.annealing();
