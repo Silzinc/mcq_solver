@@ -1,27 +1,41 @@
-#![allow(unused_imports)]
-
-mod bool_tables;
-use bool_tables::BoolTable;
+#![feature(portable_simd)]
 
 mod mcq;
-use mcq::*;
-use Answer::*;
+mod annealing;
+mod parameters;
 
-mod solver;
+use mcq::{Sheet, MCQ};
+use annealing::AnnealingSolver;
+use parameters::{SIMULATION_SHEETS, NUMBER_OF_QUESTIONS};
 
 fn main() {
-    let mcq = MCQ::generate_random();
-    for k in 0..100 {
-        if Sheet::generate_random(&mcq).grade == mcq::NUMBER_OF_QUESTIONS as u8 {
-            println!("Max grade found at sheet {}/100", k);
-            break;
+    let mut time = 0f64;
+    let mut iter = 0u32;
+    let mut successes = 0u32;
+
+    while iter < 5_000u32 {
+        let mcq = MCQ::generate_random();
+        let sheets: [Sheet; SIMULATION_SHEETS] = core::array::from_fn(|_| mcq.generate_random_sheet());
+
+        let now = std::time::Instant::now();
+        // let best_grade = sheets.iter().max_by_key(|&sh| sh.grade).unwrap().grade;
+        let possible_answers = AnnealingSolver::solve_mcq(&mcq, sheets);
+        time += now.elapsed().as_nanos() as f64 / 1_000_000.;
+
+        iter += 1;
+        if possible_answers.grade as usize == NUMBER_OF_QUESTIONS {
+            successes += 1;
         }
+        /*
+        println!(
+            "My grade : {1}/{0} \nBest grade of {2} answer sheets : {3}/{0}", 
+            NUMBER_OF_QUESTIONS, 
+            possible_answers.grade, 
+            SIMULATION_SHEETS, 
+            best_grade
+        );
+        */
     }
 
-    // let _array = [[0u8; 24]; 1 << 18];
-    // println!("{} bytes allocated on a big array\n{} bytes remaining on the stack", 
-    // std::mem::size_of_val(&_array), stacker::remaining_stack().unwrap());
-    println!("{}", std::mem::size_of::<Option<[i32; 2]>>());
-    println!("Solver weighs {}/{} available bytes", 
-    std::mem::size_of::<solver::Solver>(), stacker::remaining_stack().unwrap());
+    println!("Solved {}/{} MCQ's in {:.2e} seconds", successes, iter, time / 1_000.);
 }
