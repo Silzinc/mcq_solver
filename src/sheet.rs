@@ -1,5 +1,3 @@
-use crate::{parameters::NUMBER_OF_QUESTIONS, vec_util::vec_from_fn};
-
 pub type Answer = u8;
 
 #[derive(Clone, Debug)]
@@ -8,6 +6,7 @@ pub struct Sheet {
     pub grade: u8,
 }
 
+/*
 impl std::default::Default for Sheet {
     fn default() -> Self {
         Self {
@@ -16,3 +15,4 @@ impl std::default::Default for Sheet {
         }
     }
 }
+*/

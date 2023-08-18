@@ -1,27 +1,34 @@
 use crate::{
-    parameters::{NUMBER_OF_QUESTIONS, POSSIBLE_ANSWERS},
+    parameters::AnnealingParameters,
     sheet::*,
     vec_util::vec_from_fn,
 };
 use rand::{thread_rng, Rng};
 
-pub struct MCQ {
+pub struct MCQ<'a> {
     pub answers: Vec<Answer>,
+    pub params: &'a AnnealingParameters
 }
 
-impl MCQ {
-    pub fn generate_random() -> Self {
+impl<'a> MCQ<'a> {
+    pub fn generate_random<'b: 'a>(params: &'b AnnealingParameters) -> Self {
         let mut rng = thread_rng();
-        Self {answers: vec_from_fn(
-            NUMBER_OF_QUESTIONS, || rng.gen_range(0..POSSIBLE_ANSWERS)
-        )}
+        Self {
+            answers: vec_from_fn(
+                params.number_of_questions, || rng.gen_range(0..params.possible_answers)
+            ),
+            params: params,
+        }
     }
 
     pub fn generate_random_sheet(&self) -> Sheet {
         let mut rng = thread_rng();
-        let answers: Vec<Answer> = vec_from_fn(NUMBER_OF_QUESTIONS, || rng.gen_range(0..POSSIBLE_ANSWERS));
+        let answers: Vec<Answer> = vec_from_fn(
+            self.params.number_of_questions, 
+            || rng.gen_range(0..self.params.possible_answers)
+        );
         let mut grade = 0u8;
-        for k in 0..NUMBER_OF_QUESTIONS {
+        for k in 0..self.params.number_of_questions {
             grade += (answers[k] == self.answers[k]) as u8;
         }
         Sheet {
@@ -33,7 +40,7 @@ impl MCQ {
     // #[cfg(not(debug_assertions))]
     pub fn grade(&self, guess: &crate::annealing::GuessMCQ) -> u8 {
         let mut grade = 0u8;
-        for k in 0..NUMBER_OF_QUESTIONS {
+        for k in 0..self.params.number_of_questions {
             grade += (self.answers[k] == guess.answers[k]) as u8;
         }
         grade
