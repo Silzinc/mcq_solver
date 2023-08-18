@@ -1,8 +1,4 @@
-use crate::{
-    mcq::*, 
-    parameters::*, 
-    sheet::*
-};
+use crate::{mcq::*, parameters::*, sheet::*};
 use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {
@@ -10,11 +6,11 @@ pub struct GuessMCQ {
 }
 
 pub struct AnnealingSolver<'a> {
-    guess    : GuessMCQ,
-    sheets   : Vec<Sheet>,
-    beta     : f64,
+    guess: GuessMCQ,
+    sheets: Vec<Sheet>,
+    beta: f64,
     potential: u32,
-    params   : &'a AnnealingParameters,
+    params: &'a AnnealingParameters,
 }
 
 impl GuessMCQ {
@@ -84,10 +80,13 @@ impl<'a> AnnealingSolver<'a> {
             let old_potential = self.potential;
             let (index, previous) = self.toggle_random();
             self.update_potential();
-            if self.potential == 0 {break;}
+            if self.potential == 0 {
+                break;
+            }
 
             if self.potential > old_potential {
-                if rng.gen::<f64>() > (- ((self.potential - old_potential) as f64) * self.beta).exp() {
+                if rng.gen::<f64>() > (-((self.potential - old_potential) as f64) * self.beta).exp()
+                {
                     self.potential = old_potential;
                     self.guess.answers[index] = previous;
                 } else {
@@ -98,16 +97,23 @@ impl<'a> AnnealingSolver<'a> {
     }
 
     fn init<'b: 'a>(sheets: Vec<Sheet>, params: &'b AnnealingParameters) -> Self {
-        let guess = GuessMCQ {answers: Vec::from(
-            sheets.iter().max_by_key(|sh| sh.grade).unwrap().answers.clone()
-        )};
+        let guess = GuessMCQ {
+            answers: Vec::from(
+                sheets
+                    .iter()
+                    .max_by_key(|sh| sh.grade)
+                    .unwrap()
+                    .answers
+                    .clone(),
+            ),
+        };
 
         let mut potential = 0u32;
         for sheet in sheets.iter() {
             let dif = sheet.grade as i32 - guess.grade(&sheet) as i32;
             potential += (dif * dif) as u32;
         }
-        
+
         Self {
             guess: guess,
             sheets: sheets,
