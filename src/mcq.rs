@@ -1,22 +1,25 @@
 use crate::{
     parameters::{NUMBER_OF_QUESTIONS, POSSIBLE_ANSWERS},
     sheet::*,
+    vec_util::vec_from_fn,
 };
 use rand::{thread_rng, Rng};
 
 pub struct MCQ {
-    pub answers: [Answer; NUMBER_OF_QUESTIONS],
+    pub answers: Vec<Answer>,
 }
 
 impl MCQ {
     pub fn generate_random() -> Self {
         let mut rng = thread_rng();
-        Self {answers: core::array::from_fn(|_| rng.gen_range(0..POSSIBLE_ANSWERS))}
+        Self {answers: vec_from_fn(
+            NUMBER_OF_QUESTIONS, || rng.gen_range(0..POSSIBLE_ANSWERS)
+        )}
     }
 
     pub fn generate_random_sheet(&self) -> Sheet {
         let mut rng = thread_rng();
-        let answers: [Answer; NUMBER_OF_QUESTIONS] = core::array::from_fn(|_| rng.gen_range(0..POSSIBLE_ANSWERS));
+        let answers: Vec<Answer> = vec_from_fn(NUMBER_OF_QUESTIONS, || rng.gen_range(0..POSSIBLE_ANSWERS));
         let mut grade = 0u8;
         for k in 0..NUMBER_OF_QUESTIONS {
             grade += (answers[k] == self.answers[k]) as u8;

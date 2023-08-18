@@ -1,13 +1,17 @@
-use crate::{mcq::*, parameters::*, sheet::*};
+use crate::{
+    mcq::*, 
+    parameters::*, 
+    sheet::*
+};
 use rand::{thread_rng, Rng};
 
 pub struct GuessMCQ {
-    pub answers: [Answer; NUMBER_OF_QUESTIONS],
+    pub answers: Vec<Answer>,
 }
 
 pub struct AnnealingSolver {
     guess    : GuessMCQ,
-    sheets   : [Sheet; SIMULATION_SHEETS],
+    sheets   : Vec<Sheet>,
     beta     : f64,
     potential: u32,
 }
@@ -93,8 +97,10 @@ impl AnnealingSolver {
         }
     }
 
-    fn init(sheets: [Sheet; SIMULATION_SHEETS]) -> AnnealingSolver {
-        let guess = GuessMCQ {answers: sheets.iter().max_by_key(|&sh| sh.grade).unwrap().answers};
+    fn init(sheets: Vec<Sheet>) -> AnnealingSolver {
+        let guess = GuessMCQ {answers: Vec::from(
+            sheets.iter().max_by_key(|sh| sh.grade).unwrap().answers.clone()
+        )};
 
         let mut potential = 0u32;
         for sheet in sheets.iter() {
@@ -111,14 +117,14 @@ impl AnnealingSolver {
     }
 
     // Testing purposes
-    pub fn solve_mcq_test(mcq: &MCQ, sheets: [Sheet; SIMULATION_SHEETS]) -> bool {
+    pub fn solve_mcq_test(mcq: &MCQ, sheets: Vec<Sheet>) -> bool {
         let mut solver = Self::init(sheets);
         solver.annealing();
 
         mcq.grade(&solver.guess) as usize == NUMBER_OF_QUESTIONS
     }
 
-    pub fn solve_mcq(sheets: [Sheet; SIMULATION_SHEETS]) -> [Answer; NUMBER_OF_QUESTIONS] {
+    pub fn solve_mcq(sheets: Vec<Sheet>) -> Vec<Answer> {
         let mut solver = Self::init(sheets);
         solver.annealing();
         solver.guess.answers
