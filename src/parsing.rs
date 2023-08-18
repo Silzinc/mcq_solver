@@ -98,9 +98,10 @@ impl<'a> AnnealingParser<'a> {
     }
 }
 
-pub fn py_solve_mcq_back(
-    path_to_grades: String,
+pub fn solve_mcq_from_files_back(
     path_to_sheets: Vec<String>,
+    answer_tokens: Vec<char>,
+    path_to_grades: String,
     grades_separator: char,
 
     // annealing_params :
@@ -110,8 +111,6 @@ pub fn py_solve_mcq_back(
     starting_beta: f64,
     max_beta: f64,
     lambda_inv: f64,
-
-    answer_tokens: Vec<char>,
 ) -> Result<Vec<char>, String> {
 
     let simulation_sheets = path_to_sheets.len();
@@ -157,9 +156,9 @@ pub fn py_solve_mcq_back(
         });
     }
 
-    let mut answers = Vec::<char>::with_capacity(number_of_questions);
+    let mut solved_answers = Vec::<char>::with_capacity(number_of_questions);
     for answer_int in AnnealingSolver::solve_mcq(sheets, &annealing_params) {
-        answers.push(answer_tokens[answer_int as usize]);
+        solved_answers.push(answer_tokens[answer_int as usize]);
     }
-    Ok(answers)
+    Ok(solved_answers)
 }
