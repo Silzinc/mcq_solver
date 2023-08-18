@@ -1,18 +1,21 @@
 [package]
-name = "mcq_solver_rustlib"
+name = "mcq_solver"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-pyo3 = "0.19.2"
 rand = "0.8.5"
 stacker = "0.1.15"
+
+[dependencies.pyo3]
+version = "0.19.2"
+features = ["extension-module", "generate-import-lib", "abi3-py310"]
 
 [profile.dev]
 opt-level = 1 # makes the debug build run 30x faster roughly
 
 [lib]
-name = "mcq_solver_rustlib"
+name = "mcq_solver"
 crate-type = ["cdylib"]
