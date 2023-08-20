@@ -4,7 +4,7 @@ use crate::{
 };
 use rand::{thread_rng, Rng};
 
-#[derive(Default)]
+#[derive(Clone)]
 pub struct CandidateMCQ {
     pub answers: Vec<Answer>,
 }
@@ -105,7 +105,7 @@ impl<'a> AnnealingSolver<'a> {
         }
 
         Self {
-            current_candidate: starting_candidate,
+            current_candidate: starting_candidate.clone(),
             current_potential: starting_potential,
             best_candidate: starting_candidate,
             best_potential: starting_potential,
