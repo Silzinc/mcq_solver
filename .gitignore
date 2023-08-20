@@ -1,6 +1,8 @@
 /target
 /fails
 /doc/doc-src
+/examples/reading_sheets/sheets/
+/examples/reading_sheets/grades.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
