@@ -13,10 +13,10 @@ print("Original MCQ :")
 print(mcq)
 
 if not success:
-    print("Solving process failed")
-    raise Exception(result)
+	print("Solving process failed")
+	raise Exception(result)
 
-print("The solver gives :")
-print(result)
-print("Are they equal ?")
-print(mcq == result)
+	print("The solver gives :")
+	print(result)
+	print("Are they equal ?")
+	print(mcq == result)

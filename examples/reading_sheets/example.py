@@ -13,22 +13,21 @@ answer_tokens = "abcdef"
 mcq = create_random_mcq(400, number_of_questions, answer_tokens)
 
 result, success = solve_from_files(
-    sheets_path,
-    answer_tokens,
-    grades_path,
-    grades_separator,
-    number_of_questions,
-)
-
+	sheets_path, 
+	answer_tokens,
+	grades_path,
+	grades_separator,
+	number_of_questions,
+	)
 
 print("Original MCQ :")
 print(mcq)
 
 if not success:
-    print("Solving process failed")
-    raise Exception(result)
+	print("Solving process failed")
+	raise Exception(result)
 
-print("The solver gives :")
-print(result)
-print("Are they equal ?")
-print(mcq == result)
+	print("The solver gives :")
+	print(result)
+	print("Are they equal ?")
+	print(mcq == result)
