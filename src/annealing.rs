@@ -11,10 +11,11 @@ pub struct CandidateMCQ {
 
 pub struct AnnealingSolver<'a> {
     pub current_candidate: CandidateMCQ,
+    pub current_potential: u32,
     pub best_candidate: CandidateMCQ,
+    pub best_potential: u32,
     pub sheets: Vec<Sheet>,
     pub beta: f64,
-    pub potential: u32,
     pub params: &'a AnnealingParameters,
 }
 
@@ -43,38 +44,41 @@ fn cross_log(x: u8, y: u8) -> f64 {
 }
 
 impl<'a> AnnealingSolver<'a> {
-    fn update_potential(&mut self) {
-        let mut potential = 0u32;
+    fn update_current_potential(&mut self) {
+        let mut current_potential = 0u32;
         for sheet in self.sheets.iter() {
             let dif = sheet.grade as i32 - self.current_candidate.grade(&sheet) as i32;
-            potential += (dif * dif) as u32;
+            current_potential += (dif * dif) as u32;
         }
-        self.potential = potential;
+        self.current_potential = current_potential;
     }
 
     fn toggle_random(&mut self) -> (usize, Answer) {
         let mut rng = thread_rng();
         let index: usize = rng.gen_range(0..self.params.number_of_questions);
-        let previous = self.current_candidate.answers[index];
+        let previous_answer = self.current_candidate.answers[index];
         self.current_candidate.answers[index] = rng.gen_range(0..self.params.possible_answers);
-        (index, previous)
+        (index, previous_answer)
     }
 
     fn annealing(&mut self) {
         let mut rng = thread_rng();
-        while self.beta < self.params.max_beta {
-            let old_potential = self.potential;
-            let (index, previous) = self.toggle_random();
-            self.update_potential();
-            if self.potential == 0 {
-                break;
+        while self.best_potential != 0 && self.beta < self.params.max_beta {
+            let old_current_potential = self.current_potential;
+            let (index, previous_answer) = self.toggle_random();
+            self.update_current_potential();
+
+            if self.current_potential < self.best_potential {
+                self.best_candidate.copy_from(&self.current_candidate);
+                self.best_potential = self.current_potential;
+                continue;
             }
 
-            if self.potential > old_potential {
-                if rng.gen::<f64>() > (-((self.potential - old_potential) as f64) * self.beta).exp()
+            if self.current_potential > old_current_potential {
+                if rng.gen::<f64>() > (-((self.current_potential - old_current_potential) as f64) * self.beta).exp()
                 {
-                    self.potential = old_potential;
-                    self.current_candidate.answers[index] = previous;
+                    self.current_potential = old_current_potential;
+                    self.current_candidate.answers[index] = previous_answer;
                 } else {
                     self.beta *= self.params.lambda_inv;
                 }
@@ -83,7 +87,7 @@ impl<'a> AnnealingSolver<'a> {
     }
 
     fn init<'b: 'a>(sheets: Vec<Sheet>, params: &'b AnnealingParameters) -> Self {
-        let current_candidate = CandidateMCQ {
+        let starting_candidate = CandidateMCQ {
             answers: Vec::from(
                 sheets
                     .iter()
@@ -94,24 +98,26 @@ impl<'a> AnnealingSolver<'a> {
             ),
         };
 
-        let mut potential = 0u32;
+        let mut starting_potential = 0u32;
         for sheet in sheets.iter() {
-            let dif = sheet.grade as i32 - current_candidate.grade(&sheet) as i32;
-            potential += (dif * dif) as u32;
+            let dif = sheet.grade as i32 - starting_candidate.grade(&sheet) as i32;
+            starting_potential += (dif * dif) as u32;
         }
 
         Self {
-            current_candidate: current_candidate,
-            sheets: sheets,
+            current_candidate: starting_candidate,
+            current_potential: starting_potential,
+            best_candidate: starting_candidate,
+            best_potential: starting_potential,
+            sheets,
             beta: params.starting_beta,
-            potential: potential,
-            params: params,
+            params,
         }
     }
     
     pub fn solve_mcq<'b: 'a>(sheets: Vec<Sheet>, params: &'b AnnealingParameters) -> Vec<Answer> {
         let mut solver = Self::init(sheets, params);
         solver.annealing();
-        solver.current_candidate.answers
+        solver.best_candidate.answers
     }
 }
