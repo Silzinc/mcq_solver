@@ -26,6 +26,10 @@ impl CandidateMCQ {
         }
         grade
     }
+
+    fn copy_from(&mut self, other: &Self) {
+        self.answers.copy_from_slice(other.answers.as_slice());
+    }
 }
 
 // Maybe later used to replace least squares with cross entropy
